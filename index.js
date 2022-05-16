@@ -105,6 +105,8 @@ async function run() {
 
     app.get('/booking', async (req, res) => {
       const patient = req.query.patient;
+      const authorization = req.headers.authorization;
+      console.log('Auth Header', authorization);
       const query = { patient: patient };
       const bookings = await bookingCollection.find(query).toArray();
       res.send(bookings);
@@ -113,6 +115,7 @@ async function run() {
     // add a new booking
     app.post('/booking', async (req, res) => {
       const booking = req.body;
+
       const query = {
         treatment: booking.treatment,
         date: booking.date,
