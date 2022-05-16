@@ -55,9 +55,20 @@ async function run() {
     });
 
     // get all users
-    app.get('/user', async (req, res) => {
+    app.get('/user', verifyJWT, async (req, res) => {
       const users = await userCollection.find().toArray();
       res.send(users);
+    });
+
+    app.put('/user/admin/:email', verifyJWT, async (req, res) => {
+      const email = req.params.email;
+
+      const filter = { email: email };
+      const updatedDoc = {
+        $set: { role: 'admin' },
+      };
+      const result = await userCollection.updateOne(filter, updatedDoc);
+      res.send(result);
     });
 
     app.put('/user/:email', async (req, res) => {
