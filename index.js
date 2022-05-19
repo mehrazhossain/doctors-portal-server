@@ -256,7 +256,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-  res.send('Doctors Portal Server is Running');
+  res.send('Doctors Portal Server is Running on Heroku Port.');
 });
 
 app.listen(port, () => {
