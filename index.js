@@ -94,6 +94,10 @@ async function run() {
       .db('doctors_portal_db')
       .collection('doctors');
 
+    const paymentCollection = client
+      .db('doctors_portal_db')
+      .collection('payments');
+
     // verify admin middleware
     const verifyAdmin = async (req, res, next) => {
       const requester = req.decoded.email;
@@ -215,6 +219,24 @@ async function run() {
      * app.put('/booking/:id') // upsert ==> update (if exists) or insert (if doesn't exist)
      * app.delete('/booking/:id) //
      **/
+
+    app.patch('/booking/:id', verifyJWT, async (req, res) => {
+      const id = req.params.id;
+      const payment = req.body;
+      const filter = { _id: ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          paid: true,
+          transactionId: payment.transactionId,
+        },
+      };
+      const result = await paymentCollection.insertOne(payment);
+      const updatedBooking = await bookingCollection.updateOne(
+        filter,
+        updatedDoc
+      );
+      res.send(updatedDoc);
+    });
 
     app.get('/booking', verifyJWT, async (req, res) => {
       const patient = req.query.patient;
